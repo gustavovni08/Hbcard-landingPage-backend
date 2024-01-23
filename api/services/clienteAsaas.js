@@ -1,9 +1,9 @@
 const axios = require('axios')
-const headers = require('../model/headers')
+const {apiUrl, headers} = require('../model/headers')
 
 async function listarClientesAsaas(){
     try {
-        const {data} = await axios.get('https://sandbox.asaas.com/api/v3/customers', {headers})
+        const {data} = await axios.get(`${apiUrl}customers`, {headers})
         return data
     } catch (error) {
         throw error
@@ -16,7 +16,7 @@ async function buscarClientePorCpf(cpf){
     console.log('buscando cliente de cpf:' + cpf)
     
     try {
-        const {data} = await axios.get(`https://sandbox.asaas.com/api/v3/customers?cpfCnpj=${cpf}`, {headers})
+        const {data} = await axios.get(`${apiUrl}customers?cpfCnpj=${cpf}`, {headers})
         const cliente = data.data[0]
         // console.log(cliente)
         return cliente
@@ -49,7 +49,7 @@ async function cadastrarClienteAsaas(cpf, nome, email, telefone){
             mobilePhone: telefone,
         }
 
-        const response = await axios.post('https://sandbox.asaas.com/api/v3/customers', body, {headers})
+        const response = await axios.post(`${apiUrl}customers`, body, {headers})
         console.log('cliente inserido com sucesso')
         return response.data
 

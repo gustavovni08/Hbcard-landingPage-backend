@@ -1,4 +1,4 @@
-const headers = require('../model/headers')
+const {apiUrl, headers} = require('../model/headers')
 const axios = require('axios');
 const { getCodigoCliente } = require('./clienteAsaas');
 const { format, addDays } = require('date-fns');
@@ -18,7 +18,7 @@ async function criarCobrancaAsaas(costumer_code, value){
             dueDate: data
         }
 
-        const response = await axios.post('https://sandbox.asaas.com/api/v3/payments', body, { headers })
+        const response = await axios.post(`${apiUrl}payments`, body, { headers })
         console.log('Cobrança criada com sucesso:', response.data);
         return response.data;
 
@@ -44,7 +44,7 @@ function getData() {
 async function getLinkCobranca(cpf){
     try{
         const costumer_code = await getCodigoCliente(cpf)
-        const {data} = await axios.get(`https://sandbox.asaas.com/api/v3/payments?customer=${costumer_code}`, { headers })
+        const {data} = await axios.get(`${apiUrl}payments?customer=${costumer_code}`, { headers })
         console.log(data)
         return data
     } catch (error) {

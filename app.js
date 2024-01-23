@@ -3,12 +3,24 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-const {listarClientesAsaas, cadastrarClienteAsaas, getCodigoCliente, buscarClientePorCpf} = require('./api/services/clienteAsaas')
-const { criarCobrancaAsaas, getLinkCobranca } = require('./api/services/cobrançaAsaas')
+const { 
+        listarClientesAsaas, 
+        cadastrarClienteAsaas, 
+        getCodigoCliente, 
+        buscarClientePorCpf 
+      } = require('./api/services/clienteAsaas')
+
+const { 
+        criarCobrancaAsaas, 
+        getLinkCobranca 
+      } = require('./api/services/cobrançaAsaas')
+
+const { listarAssinaturas, criarNovaAssinatura } = require('./api/services/AssinaturasAsaas')
+
 const {
   listarClientesTelemedicina, 
   cadastrarClienteTelemedicina,
-} = require('./api/services/clientesTelemedicina')
+      } = require('./api/services/clientesTelemedicina')
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
@@ -81,7 +93,6 @@ app.get('/buscar-cliente-assas-por-cpf', async (req, res) => {
   }
 })
 
-
 app.get('/buscar-codigo-cliente-assas-por-cpf', async (req, res) => {
     try {
       const {cpf} = req.body
@@ -125,6 +136,29 @@ app.get('/retornar-link-de-cobranca', async (req,res) => {
   } catch (error) {
     console.error('Erro ao processar requisição:', error.message);
     res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+})
+
+app.get('/listar-assinaturas', async (req, res) => {
+  try {
+    const response = await listarAssinaturas()
+    console.log(response)
+    res.status(200).json({ message: 'suas assinaturas: ', data: response})
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+})
+
+app.post('/gerar-assinatura', async (req, res) => {
+  try {
+    const {cpf, value} = req.body
+    const response = await criarNovaAssinatura(cpf, value)
+    res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Erro interno do servidor.', data:error });
   }
 })
 
