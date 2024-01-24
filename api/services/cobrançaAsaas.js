@@ -15,7 +15,12 @@ async function criarCobrancaAsaas(costumer_code, value){
             billingType: "UNDEFINED",
             customer: costumer_code,
             value: value,
-            dueDate: data
+            dueDate: data,
+
+            split: {
+                walletid:'12763a38-bf30-491e-a872-f7767d168462',
+                percentualValue: 100,
+            },
         }
 
         const response = await axios.post(`${apiUrl}payments`, body, { headers })
