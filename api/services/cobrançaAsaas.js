@@ -17,10 +17,10 @@ async function criarCobrancaAsaas(costumer_code, value){
             value: value,
             dueDate: data,
 
-            split: {
-                walletid:'12763a38-bf30-491e-a872-f7767d168462',
+            split: [{
+                walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
                 percentualValue: 100,
-            },
+            }],
         }
 
         const response = await axios.post(`${apiUrl}payments`, body, { headers })

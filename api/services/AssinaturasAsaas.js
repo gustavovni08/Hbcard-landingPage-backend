@@ -40,10 +40,12 @@ async function criarNovaAssinatura(cpf, value){
             value: value / 2 ,
             nextDueDate: getDataFormatada(),
             cycle: "MONTHLY",
-            split: {
-                walletid:'12763a38-bf30-491e-a872-f7767d168462',
-                percentualValue: 100,
+            split: [
+                {
+                walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                percentualValue: 20,
             }
+            ]
         }
 
         const {data} = await axios.post(`${apiUrl}subscriptions`, assinatura, {headers})
