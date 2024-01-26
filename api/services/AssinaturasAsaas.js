@@ -61,5 +61,45 @@ async function criarNovaAssinatura(cpf, value){
 
 }
 
+async function criarNovaAssinaturaZenilson(cpf, value){
 
-module.exports = { listarAssinaturas, criarNovaAssinatura }
+    const costumer = await getCodigoCliente(cpf)
+    console.log(costumer)
+
+    try {
+        const costumer = await getCodigoCliente(cpf)
+        console.log(costumer)
+
+        const assinatura = {
+            customer: costumer,
+            billingType: "UNDEFINED",
+            value: value / 2 ,
+            nextDueDate: getDataFormatada(),
+            cycle: "MONTHLY",
+            split: [
+                {
+                    walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                    percentualValue: 10,
+                },
+                {
+                    walletId:'736ce9af-da06-4908-9631-5425c2d73d88',
+                    percentualValue: 10,
+                },
+            ]
+        }
+
+        const {data} = await axios.post(`${apiUrl}subscriptions`, assinatura, {headers})
+        console.log('assinatura registrada com sucesso')
+        
+        return data
+
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+
+
+}
+
+
+module.exports = { listarAssinaturas, criarNovaAssinatura, criarNovaAssinaturaZenilson }

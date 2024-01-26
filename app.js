@@ -12,10 +12,11 @@ const {
 
 const { 
         criarCobrancaAsaas, 
-        getLinkCobranca 
+        getLinkCobranca, 
+        criarCobrancaAsaasZenilson
       } = require('./api/services/cobrançaAsaas')
 
-const { listarAssinaturas, criarNovaAssinatura } = require('./api/services/AssinaturasAsaas')
+const { listarAssinaturas, criarNovaAssinatura, criarNovaAssinaturaZenilson } = require('./api/services/AssinaturasAsaas')
 
 const {
   listarClientesTelemedicina, 
@@ -41,6 +42,7 @@ app.get('/', (req, res) => {
 
 app.post('/adicionar-usuario', async (req, res) => {
     try {
+    
       const { cpf, nome, email, telefone, dataNascimento } = req.body;
   
       if (!cpf || !nome || !email || !telefone || !dataNascimento) {
@@ -48,24 +50,37 @@ app.post('/adicionar-usuario', async (req, res) => {
       }
   
       const resultadoInsercao = await cadastrarClienteTelemedicina(cpf, nome, email, telefone, dataNascimento);
+    
       console.log('cadastrando cliente no asaas')
+    
       await cadastrarClienteAsaas(cpf, nome, email, telefone)
   
       res.status(200).json({ message: 'Usuário adicionado com sucesso.'});
+    
     } catch (error) {
+    
       console.error('Erro ao processar requisição:', error.message);
       res.status(500).json({ error: 'Erro interno do servidor.' });
+    
     }
   })
 
 app.get('/listar-usuarios', async (req, res) => {
+    
     try {
+    
       console.log('Acessando a rota /listar-usuarios');
+
       const usuarios = await listarClientesTelemedicina();
+      
       console.log('Lista de usuários:', usuarios);
+      
       res.status(200).json({ message: 'Lista de usuários:', data: usuarios });
+    
     } catch (error) {
+      
       console.error('Erro ao processar requisição:', error.message);
+      
       res.status(500).json({ error: 'Erro interno do servidor.' });
     }
   });
@@ -73,11 +88,16 @@ app.get('/listar-usuarios', async (req, res) => {
 app.get('/listar-clientes-asaas', async (req, res) =>{
     try{
       const data = await listarClientesAsaas()
+
       res.status(200).json({ message: 'Lista de clientes cadastrados no Asaas:', data: data})
+      
       console.log(data)
+
     } catch (error) {
+      
       console.error('Erro ao processar requisição:', error.message);
       res.status(500).json({ error: 'Erro interno do servidor.' });
+
     }
 })
 
@@ -85,36 +105,74 @@ app.get('/buscar-cliente-assas-por-cpf', async (req, res) => {
   try {
     const {cpf} = req.body
     const data = await buscarClientePorCpf(cpf)
-    console.log(data);
+
+    console.log(data)
+
     res.status(200).json({ message: 'cliente: ', data: data})
+  
   } catch (error) {
+  
     console.error('Erro ao processar requisição:', error.message);
+  
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
 
 app.get('/buscar-codigo-cliente-assas-por-cpf', async (req, res) => {
     try {
+
       const {cpf} = req.body
       const data = await getCodigoCliente(cpf)
+      
       console.log(data);
+      
       res.status(200).json({ message: 'cliente: ', data: data})
+    
     } catch (error) {
+    
       console.error('Erro ao processar requisição:', error.message);
+    
       res.status(500).json({ error: 'Erro interno do servidor.' });
     }
 })
 
 app.post('/gerar-cobranca', async (req, res) =>{
   try {
+
     const {cpf, value} = req.body
     const costumer_code = await getCodigoCliente(cpf)
 
     const response = await criarCobrancaAsaas(costumer_code, value)
+    
     console.log(response)
+    
     res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
+  
   } catch (error) {
+  
     console.error('Erro ao processar requisição:', error.message);
+  
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+})
+
+
+app.post('/gerar-cobranca-zenilson', async (req, res) =>{
+  try {
+
+    const {cpf, value} = req.body
+    const costumer_code = await getCodigoCliente(cpf)
+
+    const response = await criarCobrancaAsaasZenilson(costumer_code, value)
+    
+    console.log(response)
+    
+    res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
+  
+  } catch (error) {
+  
+    console.error('Erro ao processar requisição:', error.message);
+  
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
@@ -154,6 +212,18 @@ app.post('/gerar-assinatura', async (req, res) => {
   try {
     const {cpf, value} = req.body
     const response = await criarNovaAssinatura(cpf, value)
+    res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Erro interno do servidor.', data:error });
+  }
+})
+
+app.post('/gerar-assinatura-zenilson', async (req, res) => {
+  try {
+    const {cpf, value} = req.body
+    const response = await criarNovaAssinaturaZenilson(cpf, value)
     res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
 
   } catch (error) {

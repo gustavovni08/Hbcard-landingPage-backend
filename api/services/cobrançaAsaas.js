@@ -36,6 +36,45 @@ async function criarCobrancaAsaas(costumer_code, value){
 
 }
 
+async function criarCobrancaAsaasZenilson(costumer_code, value){
+
+    console.log(costumer_code, value)
+
+    try {
+        
+        const data = getData()
+        const body = {
+            billingType: "UNDEFINED",
+            customer: costumer_code,
+            value: value,
+            dueDate: data,
+            description:'PLANO TELEMEDICINA HBCARD 1° MENSALIDADE + TAXA DE ADESÃO',
+
+            split: [
+                {
+                    walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                    percentualValue: 50,
+                },
+                {
+                    walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                    percentualValue: 50,
+                },
+        ],
+        }
+
+        const response = await axios.post(`${apiUrl}payments`, body, { headers })
+        console.log('Cobrança criada com sucesso:', response.data);
+        return response.data;
+
+    } catch (error) {
+        
+        console.error('Erro ao criar cobrança:', error);
+        throw error;
+
+    }
+
+}
+
 function getData() {
 
     const dataAtual = new Date();
@@ -59,4 +98,4 @@ async function getLinkCobranca(cpf){
 }
 
 
-module.exports = { criarCobrancaAsaas, getLinkCobranca };
+module.exports = { criarCobrancaAsaas, criarCobrancaAsaasZenilson, getLinkCobranca };
