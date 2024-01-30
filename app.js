@@ -11,12 +11,19 @@ const {
       } = require('./api/services/clienteAsaas')
 
 const { 
-        criarCobrancaAsaas, 
         getLinkCobranca, 
-        criarCobrancaAsaasZenilson
+        criarCobrancaAsaas,
+        criarCobrancaAsaasJoyce, 
+        criarCobrancaAsaasMericia,
+        criarCobrancaAsaasZenilson,
       } = require('./api/services/cobrançaAsaas')
 
-const { listarAssinaturas, criarNovaAssinatura, criarNovaAssinaturaZenilson } = require('./api/services/AssinaturasAsaas')
+const { listarAssinaturas, 
+        criarNovaAssinatura, 
+        criarNovaAssinaturaJoyce,
+        criarNovaAssinaturaMericia, 
+        criarNovaAssinaturaZenilson,
+      } = require('./api/services/AssinaturasAsaas')
 
 const {
   listarClientesTelemedicina, 
@@ -156,7 +163,6 @@ app.post('/gerar-cobranca', async (req, res) =>{
   }
 })
 
-
 app.post('/gerar-cobranca-zenilson', async (req, res) =>{
   try {
 
@@ -229,6 +235,70 @@ app.post('/gerar-assinatura-zenilson', async (req, res) => {
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Erro interno do servidor.', data:error });
+  }
+})
+
+app.post('/gerar-assinatura-mericia', async (req, res) => {
+  try {
+    const {cpf, value} = req.body
+    const response = await criarNovaAssinaturaMericia(cpf, value)
+    res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Erro interno do servidor.', data:error });
+  }
+})
+
+app.post('/gerar-cobranca-joyce', async (req, res) =>{
+  try {
+
+    const {cpf, value} = req.body
+    const costumer_code = await getCodigoCliente(cpf)
+
+    const response = await criarCobrancaAsaasMericia(costumer_code, value)
+    
+    console.log(response)
+    
+    res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
+  
+  } catch (error) {
+  
+    console.error('Erro ao processar requisição:', error.message);
+  
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+})
+
+app.post('/gerar-assinatura-joyce', async (req, res) => {
+  try {
+    const {cpf, value} = req.body
+    const response = await criarNovaAssinaturaJoyce(cpf, value)
+    res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Erro interno do servidor.', data:error });
+  }
+})
+
+app.post('/gerar-cobranca-joyce', async (req, res) =>{
+  try {
+
+    const {cpf, value} = req.body
+    const costumer_code = await getCodigoCliente(cpf)
+
+    const response = await criarCobrancaAsaasJoyce(costumer_code, value)
+    
+    console.log(response)
+    
+    res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
+  
+  } catch (error) {
+  
+    console.error('Erro ao processar requisição:', error.message);
+  
+    res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
 

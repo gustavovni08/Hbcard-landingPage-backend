@@ -101,5 +101,91 @@ async function criarNovaAssinaturaZenilson(cpf, value){
 
 }
 
+async function criarNovaAssinaturaMericia(cpf, value){
 
-module.exports = { listarAssinaturas, criarNovaAssinatura, criarNovaAssinaturaZenilson }
+    const costumer = await getCodigoCliente(cpf)
+    console.log(costumer)
+
+    try {
+        const costumer = await getCodigoCliente(cpf)
+        console.log(costumer)
+
+        const assinatura = {
+            customer: costumer,
+            billingType: "UNDEFINED",
+            value: value / 2 ,
+            nextDueDate: getDataFormatada(),
+            cycle: "MONTHLY",
+            split: [
+                {
+                    walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                    percentualValue: 15,
+                },
+                {
+                    walletId:'80f9720e-bbea-4715-8135-6a817ad1a5f3',
+                    percentualValue: 5,
+                },
+            ]
+        }
+
+        const {data} = await axios.post(`${apiUrl}subscriptions`, assinatura, {headers})
+        console.log('assinatura registrada com sucesso')
+        
+        return data
+
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+
+
+}
+
+async function criarNovaAssinaturaJoyce(cpf, value){
+
+    const costumer = await getCodigoCliente(cpf)
+    console.log(costumer)
+
+    try {
+        const costumer = await getCodigoCliente(cpf)
+        console.log(costumer)
+
+        const assinatura = {
+            customer: costumer,
+            billingType: "UNDEFINED",
+            value: value / 2 ,
+            nextDueDate: getDataFormatada(),
+            cycle: "MONTHLY",
+            split: [
+                {
+                    walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                    percentualValue: 15,
+                },
+                {
+                    walletId:'33116e62-51cb-4c6f-97e7-ae8602602117',
+                    percentualValue: 5,
+                },
+            ]
+        }
+
+        const {data} = await axios.post(`${apiUrl}subscriptions`, assinatura, {headers})
+        console.log('assinatura registrada com sucesso')
+        
+        return data
+
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+
+
+}
+
+
+module.exports = { 
+                    listarAssinaturas, 
+                    criarNovaAssinatura, 
+                    criarNovaAssinaturaJoyce,
+                    criarNovaAssinaturaMericia,
+                    criarNovaAssinaturaZenilson,
+                }

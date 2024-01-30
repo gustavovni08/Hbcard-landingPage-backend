@@ -16,6 +16,7 @@ async function criarCobrancaAsaas(costumer_code, value){
             customer: costumer_code,
             value: value,
             dueDate: data,
+            description:'PLANO TELEMEDICINA HBCARD 1° MENSALIDADE + TAXA DE ADESÃO',
 
             split: [{
                 walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
@@ -52,7 +53,7 @@ async function criarCobrancaAsaasZenilson(costumer_code, value){
 
             split: [
                 {
-                    walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                    walletId:'736ce9af-da06-4908-9631-5425c2d73d88',
                     percentualValue: 50,
                 },
                 {
@@ -74,6 +75,85 @@ async function criarCobrancaAsaasZenilson(costumer_code, value){
     }
 
 }
+
+async function criarCobrancaAsaasMericia(costumer_code, value){
+
+    console.log(costumer_code, value)
+
+    try {
+        
+        const data = getData()
+        const body = {
+            billingType: "UNDEFINED",
+            customer: costumer_code,
+            value: value,
+            dueDate: data,
+            description:'PLANO TELEMEDICINA HBCARD 1° MENSALIDADE + TAXA DE ADESÃO',
+
+            split: [
+                {
+                    walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                    percentualValue: 50,
+                },
+                {
+                    walletId:'736ce9af-da06-4908-9631-5425c2d73d88',
+                    percentualValue: 50,
+                },
+        ],
+        }
+
+        const response = await axios.post(`${apiUrl}payments`, body, { headers })
+        console.log('Cobrança criada com sucesso:', response.data);
+        return response.data;
+
+    } catch (error) {
+        
+        console.error('Erro ao criar cobrança:', error);
+        throw error;
+
+    }
+
+}
+
+async function criarCobrancaAsaasJoyce(costumer_code, value){
+
+    console.log(costumer_code, value)
+
+    try {
+        
+        const data = getData()
+        const body = {
+            billingType: "UNDEFINED",
+            customer: costumer_code,
+            value: value,
+            dueDate: data,
+            description:'PLANO TELEMEDICINA HBCARD 1° MENSALIDADE + TAXA DE ADESÃO',
+
+            split: [
+                {
+                    walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+                    percentualValue: 50,
+                },
+                {
+                    walletId:'33116e62-51cb-4c6f-97e7-ae8602602117',
+                    percentualValue: 50,
+                },
+        ],
+        }
+
+        const response = await axios.post(`${apiUrl}payments`, body, { headers })
+        console.log('Cobrança criada com sucesso:', response.data);
+        return response.data;
+
+    } catch (error) {
+        
+        console.error('Erro ao criar cobrança:', error);
+        throw error;
+
+    }
+
+}
+
 
 function getData() {
 
@@ -98,4 +178,10 @@ async function getLinkCobranca(cpf){
 }
 
 
-module.exports = { criarCobrancaAsaas, criarCobrancaAsaasZenilson, getLinkCobranca };
+module.exports = {  
+                    getLinkCobranca, 
+                    criarCobrancaAsaas,
+                    criarCobrancaAsaasJoyce, 
+                    criarCobrancaAsaasMericia, 
+                    criarCobrancaAsaasZenilson, 
+}
