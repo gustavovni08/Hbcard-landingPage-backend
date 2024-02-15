@@ -30,10 +30,13 @@ const {
   cadastrarClienteTelemedicina,
       } = require('./api/services/clientesTelemedicina')
 
+
+//middlewares
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
 const cors = require('cors')
+const { enviarEmail, enviarEmailPosCompra, enviarPlanilhaUsuarios } = require('./api/services/Nodemailer')
 
 app.use(cors({
   origin: 'http://localhost:8080',
@@ -43,10 +46,13 @@ app.use(cors({
 
 require('dotenv').config();
 
+
+//rota inicial
 app.get('/', (req, res) => {
     res.send('Olá Mundo!')
 })
 
+//endpoints de comunicação com o localdatabase
 app.post('/adicionar-usuario', async (req, res) => {
     try {
     
@@ -70,8 +76,7 @@ app.post('/adicionar-usuario', async (req, res) => {
       res.status(500).json({ error: 'Erro interno do servidor.' });
     
     }
-  })
-
+})
 app.get('/listar-usuarios', async (req, res) => {
     
     try {
@@ -90,8 +95,9 @@ app.get('/listar-usuarios', async (req, res) => {
       
       res.status(500).json({ error: 'Erro interno do servidor.' });
     }
-  });
+})
 
+//endpoints de comunicação com a api ASAAS
 app.get('/listar-clientes-asaas', async (req, res) =>{
     try{
       const data = await listarClientesAsaas()
@@ -107,7 +113,6 @@ app.get('/listar-clientes-asaas', async (req, res) =>{
 
     }
 })
-
 app.get('/buscar-cliente-assas-por-cpf', async (req, res) => {
   try {
     const {cpf} = req.body
@@ -124,7 +129,6 @@ app.get('/buscar-cliente-assas-por-cpf', async (req, res) => {
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
-
 app.get('/buscar-codigo-cliente-assas-por-cpf', async (req, res) => {
     try {
 
@@ -142,7 +146,6 @@ app.get('/buscar-codigo-cliente-assas-por-cpf', async (req, res) => {
       res.status(500).json({ error: 'Erro interno do servidor.' });
     }
 })
-
 app.post('/gerar-cobranca', async (req, res) =>{
   try {
 
@@ -162,27 +165,6 @@ app.post('/gerar-cobranca', async (req, res) =>{
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
-
-app.post('/gerar-cobranca-zenilson', async (req, res) =>{
-  try {
-
-    const {cpf, value} = req.body
-    const costumer_code = await getCodigoCliente(cpf)
-
-    const response = await criarCobrancaAsaasZenilson(costumer_code, value)
-    
-    console.log(response)
-    
-    res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
-  
-  } catch (error) {
-  
-    console.error('Erro ao processar requisição:', error.message);
-  
-    res.status(500).json({ error: 'Erro interno do servidor.' });
-  }
-})
-
 app.get('/retornar-link-de-cobranca', async (req,res) => {
   try {
     const cpf = req.query.cpf
@@ -202,7 +184,6 @@ app.get('/retornar-link-de-cobranca', async (req,res) => {
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
-
 app.get('/listar-assinaturas', async (req, res) => {
   try {
     const response = await listarAssinaturas()
@@ -213,7 +194,6 @@ app.get('/listar-assinaturas', async (req, res) => {
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
-
 app.post('/gerar-assinatura', async (req, res) => {
   try {
     const {cpf, value} = req.body
@@ -226,6 +206,26 @@ app.post('/gerar-assinatura', async (req, res) => {
   }
 })
 
+//endpoints personalizados para os vendedores
+app.post('/gerar-cobranca-zenilson', async (req, res) =>{
+  try {
+
+    const {cpf, value} = req.body
+    const costumer_code = await getCodigoCliente(cpf)
+
+    const response = await criarCobrancaAsaasZenilson(costumer_code, value)
+    
+    console.log(response)
+    
+    res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
+  
+  } catch (error) {
+  
+    console.error('Erro ao processar requisição:', error.message);
+  
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+})
 app.post('/gerar-assinatura-zenilson', async (req, res) => {
   try {
     const {cpf, value} = req.body
@@ -237,7 +237,6 @@ app.post('/gerar-assinatura-zenilson', async (req, res) => {
     res.status(500).json({ error: 'Erro interno do servidor.', data:error });
   }
 })
-
 app.post('/gerar-assinatura-mericia', async (req, res) => {
   try {
     const {cpf, value} = req.body
@@ -249,8 +248,7 @@ app.post('/gerar-assinatura-mericia', async (req, res) => {
     res.status(500).json({ error: 'Erro interno do servidor.', data:error });
   }
 })
-
-app.post('/gerar-cobranca-joyce', async (req, res) =>{
+app.post('/gerar-cobranca-mericia', async (req, res) =>{
   try {
 
     const {cpf, value} = req.body
@@ -269,7 +267,6 @@ app.post('/gerar-cobranca-joyce', async (req, res) =>{
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
-
 app.post('/gerar-assinatura-joyce', async (req, res) => {
   try {
     const {cpf, value} = req.body
@@ -281,7 +278,6 @@ app.post('/gerar-assinatura-joyce', async (req, res) => {
     res.status(500).json({ error: 'Erro interno do servidor.', data:error });
   }
 })
-
 app.post('/gerar-cobranca-joyce', async (req, res) =>{
   try {
 
@@ -301,6 +297,35 @@ app.post('/gerar-cobranca-joyce', async (req, res) =>{
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 })
+
+//endpoints nodemailer
+app.post('/enviar-email', async (req, res) => {
+  try {
+    const response = await enviarEmail()
+    res.status(200).json({ mensagem: 'E-mail enviado com sucesso!', info })
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao enviar e-mail', detalhes: error.message });
+  }
+})
+app.post('/enviar-email-poscompra', async (req, res) => {
+  const {email, nome} = req.body
+  try {
+    const response = await enviarEmailPosCompra(email, nome)
+    res.status(200).json({ mensagem: 'E-mail enviado com sucesso!'})
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao enviar e-mail', detalhes: error.message });
+  }
+})
+app.post('/enviar-planilha-clientes', async (req, res) =>{
+  try {
+    const response = await enviarPlanilhaUsuarios()
+    res.status(200).json({ mensagem: 'E-mail enviado com sucesso!'})
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao enviar e-mail', detalhes: error.message });
+  }
+})
+
+
 
 app.listen(port, () =>{
     console.log(`Servidor rodando em http://localhost:${port}`)
