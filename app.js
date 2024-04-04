@@ -38,11 +38,11 @@ app.use(bodyParser.json())
 const cors = require('cors')
 const { enviarEmail, enviarEmailPosCompra, enviarPlanilhaUsuarios } = require('./api/services/Nodemailer')
 
-app.use(cors({
-  origin: 'http://localhost:8080',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-}));
+// app.use(cors({
+//   origin: 'http://localhost:8080',
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true,
+// }));
 
 app.use(cors({
   origin: 'https://hbcard.com.br',
