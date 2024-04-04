@@ -18,13 +18,13 @@ const transporter = nodemailer.createTransport({
     socketTimeout: 20000,
 })
 
-async function enviarEmail(){
+async function enviarEmail(email){
 
     const mailOptions = {
         from: 'desenvolvimento@hbcard.com.br', // Substitua com seu e-mail na Locaweb
-        to: 'lais.cerise@gmail.com',
-        subject: 'oi laís!',
-        text: 'oi laís!',
+        to: `${email}`,
+        subject: 'Assinatura Confirmada!',
+        text: 'olá, obrigado por hbcard telemedicina! seus dados estão sendo cadastrados e em breve vamos mandar mais instruções para você usar a melhor telemedicina do Brasil! HBCARD, Jeito inteligente de cuidar da saúde.',
       }
 
       console.log('enviando email...')

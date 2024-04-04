@@ -4,9 +4,9 @@ const { getCodigoCliente } = require('./clienteAsaas');
 const { format, addDays } = require('date-fns');
 
 
-async function criarCobrancaAsaas(costumer_code, value){
+async function criarCobrancaAsaas(costumer_code, value, vendor_code){
 
-    console.log(costumer_code, value)
+    console.log(costumer_code, value, vendor_code)
 
     try {
         
@@ -16,12 +16,12 @@ async function criarCobrancaAsaas(costumer_code, value){
             customer: costumer_code,
             value: value,
             dueDate: data,
-            description:'PLANO TELEMEDICINA HBCARD 1° MENSALIDADE + TAXA DE ADESÃO',
+            description:`PLANO TELEMEDICINA HBCARD 1° MENSALIDADE + TAXA DE ADESÃO || VENDEDOR:${vendor_code}`,
 
-            split: [{
-                walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
-                percentualValue: 100,
-            }],
+            // split: [{
+            //     walletId:'502f7e79-b3ae-4dc6-bb0d-f2cb86c7bdf4',
+            //     percentualValue: 100,
+            // }],
         }
 
         const response = await axios.post(`${apiUrl}payments`, body, { headers })

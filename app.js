@@ -38,17 +38,17 @@ app.use(bodyParser.json())
 const cors = require('cors')
 const { enviarEmail, enviarEmailPosCompra, enviarPlanilhaUsuarios } = require('./api/services/Nodemailer')
 
-// app.use(cors({
-//   origin: 'http://localhost:8080',
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   credentials: true,
-// }));
-
 app.use(cors({
-  origin: 'https://hbcard.com.br',
+  origin: 'http://localhost:8080',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
+
+// app.use(cors({
+//   origin: 'https://hbcard.com.br',
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true,
+// }));
 
 
 
@@ -66,11 +66,7 @@ app.post('/adicionar-usuario', async (req, res) => {
     try {
     
       const { cpf, nome, email, telefone, dataNascimento } = req.body;
-  
-      if (!cpf || !nome || !email || !telefone || !dataNascimento) {
-        return res.status(400).json({ error: 'Dados incompletos. Certifique-se de fornecer todos os campos.' });
-      }
-  
+
       const resultadoInsercao = await cadastrarClienteTelemedicina(cpf, nome, email, telefone, dataNascimento);
     
       console.log('cadastrando cliente no asaas')
@@ -158,10 +154,10 @@ app.get('/buscar-codigo-cliente-assas-por-cpf', async (req, res) => {
 app.post('/gerar-cobranca', async (req, res) =>{
   try {
 
-    const {cpf, value} = req.body
+    const {cpf, value, vendor_code} = req.body
     const costumer_code = await getCodigoCliente(cpf)
 
-    const response = await criarCobrancaAsaas(costumer_code, value)
+    const response = await criarCobrancaAsaas(costumer_code, value, vendor_code)
     
     console.log(response)
     
@@ -216,99 +212,102 @@ app.post('/gerar-assinatura', async (req, res) => {
 })
 
 //endpoints personalizados para os vendedores
-app.post('/gerar-cobranca-zenilson', async (req, res) =>{
-  try {
+// app.post('/gerar-cobranca-zenilson', async (req, res) =>{
+//   try {
 
-    const {cpf, value} = req.body
-    const costumer_code = await getCodigoCliente(cpf)
+//     const {cpf, value} = req.body
+//     const costumer_code = await getCodigoCliente(cpf)
 
-    const response = await criarCobrancaAsaasZenilson(costumer_code, value)
+//     const response = await criarCobrancaAsaasZenilson(costumer_code, value)
     
-    console.log(response)
+//     console.log(response)
     
-    res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
+//     res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
   
-  } catch (error) {
+//   } catch (error) {
   
-    console.error('Erro ao processar requisição:', error.message);
+//     console.error('Erro ao processar requisição:', error.message);
   
-    res.status(500).json({ error: 'Erro interno do servidor.' });
-  }
-})
-app.post('/gerar-assinatura-zenilson', async (req, res) => {
-  try {
-    const {cpf, value} = req.body
-    const response = await criarNovaAssinaturaZenilson(cpf, value)
-    res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
+//     res.status(500).json({ error: 'Erro interno do servidor.' });
+//   }
+// })
+// app.post('/gerar-assinatura-zenilson', async (req, res) => {
+//   try {
+//     const {cpf, value} = req.body
+//     const response = await criarNovaAssinaturaZenilson(cpf, value)
+//     res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
 
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Erro interno do servidor.', data:error });
-  }
-})
-app.post('/gerar-assinatura-mericia', async (req, res) => {
-  try {
-    const {cpf, value} = req.body
-    const response = await criarNovaAssinaturaMericia(cpf, value)
-    res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
+//   } catch (error) {
+//     console.error(error)
+//     res.status(500).json({ error: 'Erro interno do servidor.', data:error });
+//   }
+// })
+// app.post('/gerar-assinatura-mericia', async (req, res) => {
+//   try {
+//     const {cpf, value} = req.body
+//     const response = await criarNovaAssinaturaMericia(cpf, value)
+//     res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
 
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Erro interno do servidor.', data:error });
-  }
-})
-app.post('/gerar-cobranca-mericia', async (req, res) =>{
-  try {
+//   } catch (error) {
+//     console.error(error)
+//     res.status(500).json({ error: 'Erro interno do servidor.', data:error });
+//   }
+// })
+// app.post('/gerar-cobranca-mericia', async (req, res) =>{
+//   try {
 
-    const {cpf, value} = req.body
-    const costumer_code = await getCodigoCliente(cpf)
+//     const {cpf, value} = req.body
+//     const costumer_code = await getCodigoCliente(cpf)
 
-    const response = await criarCobrancaAsaasMericia(costumer_code, value)
+//     const response = await criarCobrancaAsaasMericia(costumer_code, value)
     
-    console.log(response)
+//     console.log(response)
     
-    res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
+//     res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
   
-  } catch (error) {
+//   } catch (error) {
   
-    console.error('Erro ao processar requisição:', error.message);
+//     console.error('Erro ao processar requisição:', error.message);
   
-    res.status(500).json({ error: 'Erro interno do servidor.' });
-  }
-})
-app.post('/gerar-assinatura-joyce', async (req, res) => {
-  try {
-    const {cpf, value} = req.body
-    const response = await criarNovaAssinaturaJoyce(cpf, value)
-    res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
+//     res.status(500).json({ error: 'Erro interno do servidor.' });
+//   }
+// })
+// app.post('/gerar-assinatura-joyce', async (req, res) => {
+//   try {
+//     const {cpf, value} = req.body
+//     const response = await criarNovaAssinaturaJoyce(cpf, value)
+//     res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
 
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Erro interno do servidor.', data:error });
-  }
-})
-app.post('/gerar-cobranca-joyce', async (req, res) =>{
-  try {
+//   } catch (error) {
+//     console.error(error)
+//     res.status(500).json({ error: 'Erro interno do servidor.', data:error });
+//   }
+// })
+// app.post('/gerar-cobranca-joyce', async (req, res) =>{
+//   try {
 
-    const {cpf, value} = req.body
-    const costumer_code = await getCodigoCliente(cpf)
+//     const {cpf, value} = req.body
+//     const costumer_code = await getCodigoCliente(cpf)
 
-    const response = await criarCobrancaAsaasJoyce(costumer_code, value)
+//     const response = await criarCobrancaAsaasJoyce(costumer_code, value)
     
-    console.log(response)
+//     console.log(response)
     
-    res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
+//     res.status(200).json({ message: 'cobrança criada com sucesso ', data: response})
   
-  } catch (error) {
+//   } catch (error) {
   
-    console.error('Erro ao processar requisição:', error.message);
+//     console.error('Erro ao processar requisição:', error.message);
   
-    res.status(500).json({ error: 'Erro interno do servidor.' });
-  }
-})
+//     res.status(500).json({ error: 'Erro interno do servidor.' });
+//   }
+// })
 
 //endpoints nodemailer
 app.post('/enviar-email', async (req, res) => {
+
+  const {email} = req.body
+
   try {
     const response = await enviarEmail()
     res.status(200).json({ mensagem: 'E-mail enviado com sucesso!', info })
