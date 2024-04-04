@@ -103,7 +103,7 @@ function criarPlanilhaUsuarios(dados) {
   
       const mailOptions = {
         from: 'desenvolvimento@hbcard.com.br',
-        to: 'financeiro@hbcard.com.br',
+        to: 'juliocaio@hotmail.com',
         subject: 'Planilha de Clientes TELEMEDICINA HBCARD',
         text: `em anexo está a planilha de clientes.`,
         attachments: [
