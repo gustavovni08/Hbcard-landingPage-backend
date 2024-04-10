@@ -28,6 +28,7 @@ const { listarAssinaturas,
 const {
   listarClientesTelemedicina, 
   cadastrarClienteTelemedicina,
+  deletarUsuarios,
       } = require('./api/services/clientesTelemedicina')
 
 
@@ -155,7 +156,7 @@ app.post('/gerar-cobranca', async (req, res) =>{
   try {
 
     const {cpf, value, vendor_code} = req.body
-    const costumer_code = await getCodigoCliente(cpf)
+    const costumer_code = await buscarClientePorCpf(cpf)
 
     const response = await criarCobrancaAsaas(costumer_code, value, vendor_code)
     
@@ -205,6 +206,17 @@ app.post('/gerar-assinatura', async (req, res) => {
     const response = await criarNovaAssinatura(cpf, value)
     res.status(200).json({ message: 'suas assinatura foi gerada com sucesso!'})
 
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Erro interno do servidor.', data:error });
+  }
+})
+
+app.delete('/deletarUsuarios', async (req,res) =>{
+  try {
+    await deletarUsuarios()
+    console.log('usuarios deletados')
+    res.status(200).json({message:'usuarios deletados com sucesso'})
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Erro interno do servidor.', data:error });

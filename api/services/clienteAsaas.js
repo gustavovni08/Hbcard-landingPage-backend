@@ -17,8 +17,7 @@ async function buscarClientePorCpf(cpf){
     
     try {
         const {data} = await axios.get(`${apiUrl}customers?cpfCnpj=${cpf}`, {headers})
-        const cliente = data.data[0]
-        // console.log(cliente)
+        const cliente = data.data[0].id
         return cliente
     } catch (error) {
         console.log(error)
@@ -29,8 +28,7 @@ async function buscarClientePorCpf(cpf){
 async function getCodigoCliente(cpf) {
     try {
       const response = await buscarClientePorCpf(cpf);
-      const codigoCliente = response.id 
-    //   console.log(codigoCliente)
+      const codigoCliente = response
       return codigoCliente
 
     } catch (error) {
